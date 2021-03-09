@@ -152,6 +152,88 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Ubuntu安装Mysql" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/09/Ubuntu%E5%AE%89%E8%A3%85Mysql/">Ubuntu安装Mysql</a>
+    </h1>
+  
+
+        
+        <a href="/2021/03/09/Ubuntu%E5%AE%89%E8%A3%85Mysql/" class="archive-article-date">
+  	<time datetime="2021-03-09T11:43:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-09</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="安装命令"><a href="#安装命令" class="headerlink" title="安装命令"></a>安装命令</h1><p>1、安装Mysql用到的3个命令：</p>
+<p>打开终端，输入： <code>sudo apt-get install mysql-server</code></p>
+<p>再输入： <code>sudo apt-get install mysql-client</code></p>
+<p>再输入 ： <code>sudo apt-get install libmysqlclient-dev</code></p>
+<p>2、安装完成之后可以使用如下命令来检查是否安装成功：</p>
+<p> <code>sudo netstat -tap | grep mysql</code></p>
+<p> 如果看到有 Mysql 的socket处于 listen 状态则表示安装成功。 </p>
+<p>3、  <strong><em>进入 Mysql</em>：</strong> </p>
+<p><code>mysql -u root -p </code></p>
+<h1 id="卸载"><a href="#卸载" class="headerlink" title="卸载"></a>卸载</h1><p>首先删除mysql:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get remove mysql-*</span><br></pre></td></tr></table></figure>
+
+<p>然后清理残留的数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dpkg -l |grep ^rc|awk &#39;&#123;print $2&#125;&#39; |sudo xargs dpkg -P</span><br></pre></td></tr></table></figure>
+
+<p>它会跳出一个对话框，你选择yes就好了</p>
+<p>sudo apt-get install mysql-client mysql-server<br>安装的时候会提示要设置root密码，如果你没有在卸载的时候去清理残留数据是不会提示你去设置root密码的<br>检查mysql是不是在运行</p>
+<p>sudo service mysql status<br>一般安装完成之后都是会自动运行的。<br>如果没有运行你可以</p>
+<p>sudo service mysql start<br>查看端口</p>
+<p>sudo netstat -tap | grep mysql<br>运行它</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/03/09/Ubuntu%E5%AE%89%E8%A3%85Mysql/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-new" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
