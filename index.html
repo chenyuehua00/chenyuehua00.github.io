@@ -152,6 +152,86 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-mysql表锁死解决" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/11/mysql%E8%A1%A8%E9%94%81%E6%AD%BB%E8%A7%A3%E5%86%B3/">mysql表锁死解决</a>
+    </h1>
+  
+
+        
+        <a href="/2021/03/11/mysql%E8%A1%A8%E9%94%81%E6%AD%BB%E8%A7%A3%E5%86%B3/" class="archive-article-date">
+  	<time datetime="2021-03-11T07:59:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-11</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="mysql表锁死-无法操作"><a href="#mysql表锁死-无法操作" class="headerlink" title="mysql表锁死 , 无法操作"></a>mysql表锁死 , 无法操作</h2><p>如果频繁的对mysql进行操作 , 可能会导致表卡死 , 锁死 , 如果你是用 navicat 等工具连接mysql 进行操作, 会发现你接下来对这个表的操作都会在转圈圈,就是强制关闭 navicat 也不好使</p>
+<p> 因为根本不是navicat的问题.是mysql 的表锁死了 </p>
+<h4 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h4><h5 id="一"><a href="#一" class="headerlink" title="一"></a>一</h5><p>1、 新建查询 , 查出当前的所有进程，找出那些卡住的进程 </p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">full</span> processlist;</span><br></pre></td></tr></table></figure>
+
+<p> 2、将对应的进程杀掉就行了 </p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kill processid(进程id)<span class="operator">*</span> </span><br><span class="line">kill <span class="number">1527</span> </span><br></pre></td></tr></table></figure>
+
+<p>3、  重启mysql服务就可以了 （终端）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">net mysql stop</span><br><span class="line">net mysql start</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net restart mysql</span><br></pre></td></tr></table></figure>
+
+<h5 id="二"><a href="#二" class="headerlink" title="二"></a>二</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> information_schema.processlist <span class="keyword">where</span> command <span class="keyword">not</span> <span class="keyword">in</span> (<span class="string">&#x27;Sleep&#x27;</span>)  <span class="keyword">and</span> <span class="keyword">user</span> <span class="keyword">not</span> <span class="keyword">in</span> (<span class="string">&#x27;mydba&#x27;</span>,<span class="string">&#x27;event_scheduler&#x27;</span>,<span class="string">&#x27;repl&#x27;</span>,<span class="string">&#x27;binlogbak&#x27;</span>,<span class="string">&#x27;system user&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kill pid</span><br></pre></td></tr></table></figure>
+
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/03/11/mysql%E8%A1%A8%E9%94%81%E6%AD%BB%E8%A7%A3%E5%86%B3/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Ubuntu安装Mysql" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
