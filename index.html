@@ -152,6 +152,706 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-mysql复习" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/04/23/mysql%E5%A4%8D%E4%B9%A0/">mysql复习</a>
+    </h1>
+  
+
+        
+        <a href="/2021/04/23/mysql%E5%A4%8D%E4%B9%A0/" class="archive-article-date">
+  	<time datetime="2021-04-22T23:51:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>触发器</p>
+<ul>
+<li>触发器是一种特殊类型的存储过程</li>
+<li>他是通过事件触发而被执行，并不是主动调用执行</li>
+<li>trigger，指的是事先为某张表绑定一段代码，当表中的某些内容发生改变（增、删、改）的时候，系统会自动触发这个代码并且执行</li>
+<li>作用<ul>
+<li>可以在写入数据前，强制检验或者转化数据<ul>
+<li>也就是保护数据安全</li>
+</ul>
+</li>
+<li>触发器发生错误时，前面用户已经执行成功的操作会被撤回，类似于事务的回滚。</li>
+</ul>
+</li>
+<li>创建触发器的基本语法<ul>
+<li>应该不考</li>
+</ul>
+</li>
+<li>触发时间<ul>
+<li>before<ul>
+<li>表中数据发生改变前的状态</li>
+</ul>
+</li>
+<li>after<ul>
+<li>表中数据发生改变后的状态</li>
+</ul>
+</li>
+<li>如果before触发器失败或者语句本身失败的时候，after触发器不会被执行</li>
+</ul>
+</li>
+<li>触发器是数据改变时才会被触发<ul>
+<li>insert</li>
+<li>update</li>
+<li>delete</li>
+</ul>
+</li>
+<li>触发在每张表中唯一，但不是在数据库中唯一，所以不同的表可以有相同名字的触发器，但是每个表的每个事件只允许一个触发器</li>
+<li>触发器针对的是数据库中的每一行记录，每行数据操作的前后都会有一个相应的状态<ul>
+<li>没有操作的状态就存在old关键字中</li>
+<li>操作后的状态就存到new关键字中<ul>
+<li>需要注意的是old和new不是所有触发器都有</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><img src="C:\Users\Holm\AppData\Roaming\Typora\typora-user-images\image-20210420215303775.png" alt="image-20210420215303775"></li>
+</ul>
+<h1 id="用户与权限"><a href="#用户与权限" class="headerlink" title="用户与权限"></a>用户与权限</h1><ul>
+<li><p>MySQL可以为不同的用户指定不同的权限</p>
+</li>
+<li><p>MySQL如何认证一个用户呢？</p>
+<ul>
+<li>MySQL的用户认证形式是：用户名+主机</li>
+</ul>
+</li>
+<li><p>权限分配是   用户+主机</p>
+<ul>
+<li>所以<a href="mailto:&#x74;&#101;&#115;&#x74;&#x40;&#49;&#x32;&#55;&#x2e;&#48;&#46;&#48;&#x2e;&#x31;">&#x74;&#101;&#115;&#x74;&#x40;&#49;&#x32;&#55;&#x2e;&#48;&#46;&#48;&#x2e;&#x31;</a>和test@192.168.10.10是不同的用户</li>
+</ul>
+</li>
+<li><p>MySQL的权限分哪几种及存储在什么地方呢？</p>
+<ul>
+<li><p>root用户、普通用户</p>
+<ul>
+<li>root用户是超级管理员，拥有所有权限</li>
+<li>普通用户只有被授予的各种权限</li>
+</ul>
+</li>
+<li><p>权限分类</p>
+<ul>
+<li><p>全局层级<br>全局权限适用于MySQL中的所有数据库</p>
+<ul>
+<li>权限存储在mysql.user表中<ul>
+<li>GRANT ALL ON <em>.</em> TO ‘user’@’host’;<br><em>.</em> 表示数据库的所有库和表，对应权限存储在mysql.user表中</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>数据库层级<br>数据库权限适用于一个给定数据库中的所有目标</p>
+<ul>
+<li>权限存储在mysql.db表中<ul>
+<li>GRANT ALL ON mydb.* TO ‘user’@’host’;<br>mydb.* 表示mysql数据库下的所有表，对应权限存储在mysql.db表中</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>表层级<br>适用于一个给定表中的所有列</p>
+<ul>
+<li><p>权限存储在mysql.tables_priv表中</p>
+</li>
+<li><p>GRANT ALL ON mydb.mytable TO ‘user’@’host’</p>
+<p>mydb.mytable表示mysql数据库下的mytable表，对应权限存储在mysql.tables_priv表</p>
+</li>
+</ul>
+</li>
+<li><p>列层级<br>使用于一个给定表中的单一列</p>
+<ul>
+<li>权限存储在mysql.columns_priv表中</li>
+<li>GRANT ALL (col1,col2,col3) ON mydb.mytable TO ‘user’@’host’<br>mydb.mytable表示mysql数据库下的mytable表，col1,col2,col3表示mytable表中的列名</li>
+</ul>
+</li>
+<li><p>子程序层级<br>CREATE ROUTINE、ALTER ROUTINE、EXECUTE和GRANT权限适用于已存储的子程序。这些权限可以被授予为全局层级和数据库层级。而且，除了CREATE ROUTINE外，这些权限可以被授予子程序层级</p>
+<ul>
+<li>存储在mysql.procs_priv表中</li>
+<li>GRANT EXECUTE ON PROCEDURE mydb.myproc TO ‘user’@’host’;<br>#mydb.mytable 表示mysql数据库下的mytable表，PROCEDUR表示存储过程</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>控制访问的方式</p>
+<ol>
+<li>用户连接时的检查<ol>
+<li>当用户连接时，mysql服务器首先从user表里匹配host，user，authentication_string，匹配不到则拒绝该链接</li>
+<li>接着检查user表中max_connections和max_user_connections，如果超过上限则拒绝连接。</li>
+<li>检查user表中的SSL安全连接，如果有配置SSL，则需确认用户提供的证书是否合法。</li>
+</ol>
+</li>
+<li>执行SQL语句时的检查<ol>
+<li>从user表里检查max_questions和max_updates，如果超过上限则拒绝执行SQL</li>
+<li>首先检查user表，看是否具有相应的全局性权限，如果有，则执行，没有则继续下一步检查；</li>
+<li>接着到db表，看是否具有数据库级别的权限，如果有，则执行，没有则继续下一步检查；</li>
+<li>最后到tables_priv, columns_priv, procs_priv表里查看是否具有相应对象的权限，MySQL检查权限非常复杂，为提高性能，MySQL的启动时就会把这5张权限表加载到内存。</li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+<h1 id="索引的原理"><a href="#索引的原理" class="headerlink" title="索引的原理"></a>索引的原理</h1><ul>
+<li><p>定义</p>
+<ul>
+<li>索引是帮助MySQL高效获取数据的数据结构（有序）。</li>
+</ul>
+</li>
+<li><p>一般来说索引本身也很大，不可能全部存储在内存中，因此索引往往以索引文件的形式存储在磁盘上。索引是数据库中用来提高性能的最常用的工具</p>
+</li>
+<li><p>索引的优势与劣势</p>
+<ul>
+<li>优势<ol>
+<li>类似于书籍的目录索引，提高数据检索的效率，降低数据库的IO成本。</li>
+<li>通过索引列对数据进行排序，降低数据排序的成本，降低CPU的消耗。</li>
+</ol>
+</li>
+<li>劣势<ol>
+<li>索引实际上也是一张表，该表中保存了主键与索引字段，并指向实体类的记录，所以索引列也是要占用空间的。</li>
+<li>虽然提高了检索速度，但是却同时降低了更新表的速度，如对表进行INSERT、UPDATE、DELETE。<ul>
+<li>因为更新表时，MySQL不仅要保存数据，还要保存一下索引文件每次添加了索引列的字段，要调整因为更新所带来的键值变化后的索引信息。</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+<li><p>索引是在MySQL的存储引擎层中实现的，而不是在服务器层实现的。所以每种存储引擎的索引都不一定完全相同，也不是所有的存储引擎都支持所有的索引类型。</p>
+<ul>
+<li>MySQL提供4种索引<ul>
+<li>BTREE索引：最常见的索引类型，大部分索引都支持B树索引。</li>
+<li>HASH索引：只有Memory引擎支持，使用场景简单。</li>
+<li>R-Tree索引（空间索引）：空间索引是MyISAM引擎的一个特殊索引类型，主要用于地理空间数据类型，通常使用较少。</li>
+<li>Fulltext（全文索引）：全文索引也是MyISAM的一个特殊索引类型，主要用于全文索引，InnoDB从Mysql5.6版本开始支持全文索引。</li>
+<li><img src="https://i.loli.net/2021/04/22/d3h4ES9Bc2W8KNC.png" alt="image-20210422154010846"></li>
+<li>我们平常所说的索引，如果没有特别指明，都是指B+树（多路搜索树，并不一定是二叉的）结构组织的索引。其中聚集索引、复合索引、前缀索引、唯一索引默认都是使用B+Tree索引，统称为索引。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>B树</p>
+<p>又名多路平衡搜索树，一颗m叉的BTree特性如下：</p>
+<ul>
+<li>每个节点最多有m-1个关键字</li>
+<li>根节点最少可以只有一个关键字</li>
+<li>非根节点至少有Math.ceil(m/2)-1个关键字</li>
+<li>每个节点中的关键字都按照从小到大的顺序排列，每个关键字的左子树中所有的关键字都小于他，而右子树中所有的关键字都大于他。</li>
+<li>所有叶子节点都位于同一层，或者说根节点到每个叶子节点的长度都相同</li>
+</ul>
+</li>
+<li><p>索引的分类</p>
+<ul>
+<li>单值索引：即一个索引只包含单个列，一个表可以有多个单列索引</li>
+<li>唯一索引：索引列的值必须唯一，但允许有空值</li>
+<li>复合索引：即一个索引包含多个列</li>
+<li>主键索引</li>
+<li>全文索引</li>
+</ul>
+</li>
+<li><p>索引的设计原则</p>
+<ul>
+<li>对查询频次较高，且数据量比较大的表建立索引<ul>
+<li>如果只有insert，update则不需要索引</li>
+</ul>
+</li>
+<li>索引字段的选择，最佳候选列应当从where子句的条件中提取</li>
+<li>使用唯一索引，区分度越高，使用索引的效率越高</li>
+<li>使用短索引</li>
+<li>利用最左前缀</li>
+</ul>
+</li>
+</ul>
+<h1 id="索引原理"><a href="#索引原理" class="headerlink" title="索引原理"></a>索引原理</h1><ul>
+<li>创建了索引，并合理的利用了索引，才能够提升查询的效率</li>
+<li>避免失效的索引<ul>
+<li>全值匹配，对索引中的所有列都指定具体值</li>
+<li>如果是复合索引，那么要遵守最左前缀法则。指的是查询从索引的最左前列开始，并且不跳过索引中的列</li>
+<li>匹配最左前缀法则，索引生效</li>
+<li>最左前缀原则是发生在复合索引上的，只有复合索引才会有所谓的左和右之分</li>
+<li>最左匹配原则就是指在联合索引中，如果你的 SQL 语句中用到了联合索引中的最左边的索引，那么这条 SQL 语句就可以利用这个联合索引去进行匹配。例如某表现有索引(a, b, c)，现在你有如下语句：<ul>
+<li>select * from t where a=1 and b=1 and c =1;     #这样可以利用到定义的索引（a,b,c）,用上a,b,c</li>
+<li>select * from t where a=1 and b=1;     #这样可以利用到定义的索引（a,b,c）,用上a,b</li>
+<li>select * from t where b=1 and a=1;     #这样可以利用到定义的索引（a,b,c）,用上a,b（mysql有查询优化器）</li>
+<li>select * from t where a=1;     #这样也可以利用到定义的索引（a,b,c）,用上a</li>
+<li>select * from t where b=1 and c=1;     #这样不可以利用到定义的索引（a,b,c）</li>
+<li>select * from t where a=1 and c=1;     #这样可以利用到定义的索引（a,b,c），但只用上a索引，b,c索引用不到</li>
+</ul>
+</li>
+<li>也就是说通过最左匹配原则你可以定义一个联合索引，但是使得多数查询条件都可以用到该索引。值得注意的是，当遇到范围查询(&gt;、&lt;、between、like)就会停止匹配。也就是：<ul>
+<li>select * from t where a=1 and b&gt;1 and c =1;     #这样a,b可以用到（a,b,c），c索引用不到</li>
+</ul>
+</li>
+<li>B+树相比B树的优势： <ol>
+<li>单一节点存储更多的元素，使得查询的IO次数更少</li>
+<li>所有查询都要查找到叶子节点，查询性能稳定</li>
+<li>所有叶子节点形成有序链表，便于范围查询</li>
+</ol>
+</li>
+<li>尽量使用覆盖索引，避免select尽量使用覆盖索引<ul>
+<li>只访问索引的查询<ul>
+<li>索引列完全包含查询列</li>
+</ul>
+</li>
+<li>减少select*</li>
+</ul>
+</li>
+<li>用or分割开的条件，如果or前的条件中的列有索引，而后面的列中没有索引，那么涉及的索引都不会被用到</li>
+<li>以%开头的Like模糊查询，索引失效<br>如果仅仅是尾部模糊匹配，索引不会失效。如根是头部模糊匹配，索引失效<ul>
+<li>解决方法，覆盖索引，在 select 中加索引列</li>
+</ul>
+</li>
+<li>is NULL, is NOT NULL 有时索引失效</li>
+<li>in 走索引，not in 不走索引</li>
+<li>尽量使用复合索引，少使用单列索引</li>
+</ul>
+</li>
+</ul>
+<h1 id="explain详解"><a href="#explain详解" class="headerlink" title="explain详解"></a>explain详解</h1><p><img src="https://i.loli.net/2021/04/22/e2RhvnZx14iMjwF.png" alt="image-20210422172549142"></p>
+<ul>
+<li><p>id</p>
+<ul>
+<li><p>id相同，执行顺序从上至下</p>
+</li>
+<li><p>id不同，执行顺序从大到小</p>
+</li>
+<li><p>id相同和不同同时存在，遵守1、2规则</p>
+</li>
+<li><p><img src="https://i.loli.net/2021/04/22/5F9fHjz2Qlxhrc7.png" alt="image-20210422172434411"></p>
+</li>
+<li><p>先是第三行，再是第一行，最后是第二行</p>
+</li>
+</ul>
+</li>
+<li><p>select_type</p>
+<ul>
+<li>SIMPLE:简单select，不使用union和子查询</li>
+<li>PRIMARY：查询中包含任何复杂的子部分，最外层的select被标记为PRIMARY</li>
+<li>UNION：union中第二个后面的select语句</li>
+<li>DEPENDENT UNION：一般是子查询中的第二个select语句<ul>
+<li>取决于外查询，mysql内部也有些优化</li>
+</ul>
+</li>
+<li>UNION RESULT：union的结果</li>
+</ul>
+</li>
+</ul>
+<h1 id="innoDB"><a href="#innoDB" class="headerlink" title="innoDB"></a>innoDB</h1><p><img src="https://i.loli.net/2021/04/22/ghLdBVsbw4FAMoR.png" alt="image-20210422173410477"></p>
+<ul>
+<li><p>MySQL体系结构</p>
+<ul>
+<li>MySQL由连接池、SQL接口、解析器、优化器、缓存、存储引擎等组成</li>
+<li>可以分为三层<ul>
+<li>MySQL Server层<ul>
+<li>连接层</li>
+<li>SQL层</li>
+</ul>
+</li>
+<li>存储引擎层</li>
+<li>文件系统层</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>连接层</p>
+<ul>
+<li>通信协议</li>
+<li>线程处理</li>
+<li>用户名密码认证</li>
+</ul>
+</li>
+<li><p>SQL层<br>MySQL的核心，MySQL的核心服务都是在这层实现的</p>
+<ul>
+<li>权限判断</li>
+<li>查询缓存</li>
+<li>解析器</li>
+<li>预处理</li>
+<li>查询优化器</li>
+<li>缓存和执行计划</li>
+</ul>
+</li>
+<li><p>文件系统层</p>
+<ul>
+<li>文件系统层主要是将数据库的数据存储在操作系统的文件系统之上，并完成与存储引擎的交互。</li>
+</ul>
+</li>
+<li><p>存储引擎层</p>
+<ul>
+<li>存储引擎层是MySQL数据库区别于其他数据库最核心的一点，也是MySQL最具特色的一个地方。主要负责MySQL中数据的存储和提取</li>
+<li>存储引擎就是存储数据，建立索引，更新查询数据</li>
+<li>存储引擎是基于表的，而不是基于库的</li>
+<li>MySQL提供了插件式的存储引擎架构，可以根据需要使用相应引擎或者编写存储引擎</li>
+<li>MySQL5.0支持的存储引擎包含：<ul>
+<li>InnoDB</li>
+<li>MyISAM</li>
+<li>MEMORY</li>
+<li>BDB</li>
+<li>其中InnoDB和BDB提供事务安全表</li>
+</ul>
+</li>
+<li>查看MySQL数据库默认的存储引擎<ul>
+<li>默认是InnoDB</li>
+<li>指令：show variables like ‘%storage_engine’;</li>
+</ul>
+</li>
+<li>存储引擎的特性<ul>
+<li><img src="https://i.loli.net/2021/04/22/9Vzl465DqOAGdFg.png" alt="image-20210422175011539"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>InnoDB</p>
+<ul>
+<li>该存储引擎提供了具有提交、回滚、崩溃恢复能力的事务安全</li>
+<li>但是对比与MyISAM，InnoDB写的效率会差一些，而且会占用更多的磁盘空间以保留数据和索引</li>
+<li>MySQL支持外键的存储引擎只有InnoDB，在创建外键的时候，要求父表必须有对应的索引，子表在创建外键的时候，也会自动的创建对应的索引</li>
+<li>存储方式<ul>
+<li>使用共享表存储<ul>
+<li>创建的表结构保存在.frm文件中，数据和索引保存在innodb_data_home_dir和innodb_data_file_path定义的表空间中，可以是多个文件</li>
+</ul>
+</li>
+<li>使用多表空间存储<ul>
+<li>创建的表的表结构仍保存在.frm文件中，但是每个表的数据和索引单独保存在.ibd中</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>MyISAM</p>
+<ul>
+<li>不支持事务，也不支持外键</li>
+<li>优势是访问的速度快，对事务的完整性没有要求</li>
+<li>以SELECT、INSERT为主的应用基本上都可以使用这个引擎来创建表</li>
+<li>存储方式<br>存储成3个文件，其文件名都和表名相同，但拓展名分别是：<ul>
+<li>.frm</li>
+<li>.MYD（MYData，存储数据）</li>
+<li>.MYI（MYIndex，存储索引）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Memory</p>
+<ul>
+<li>表的数据存在内存中</li>
+<li>每个MEMORY表实际对应一个磁盘文件，格式是.frm，该文件中只存储表的结构，而其数据文件，都是存储在内存中</li>
+<li>有利于数据的快速处理，提高整个表的效率。</li>
+<li>但是服务一旦关闭，表中的数据就会丢失</li>
+</ul>
+</li>
+<li><p>选择原则</p>
+<ul>
+<li>可以根据实际情况选择多种存储引擎进行组合</li>
+<li>InnoDB用于事务处理应用程序，包含很多的更新，删除操作</li>
+<li>InnoDB除了有效的降低由于删除和更新导致的锁定，还可以确保事务的完整提交和回滚，对于类似于计费系统或者财务系统等对数据准确性要求比较高的系统，InnoDB是最合适的选择</li>
+<li>MyISAM是应用于读操作和插入操作为主，只有很少的更新和删除操作，并且对事务的完整性、并发性要求不高</li>
+<li>MEMORY是将所有数据保存在RAM中，在需要快速定位记录和其他类似数据环境下，可以提供快速的访问<ul>
+<li>缺陷是对表的大小有限制</li>
+<li>数据库异常终止后表的数据会丢失</li>
+<li>通常用于更新不太频繁的表</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>InnoDB-页结构<br>所有数据都被逻辑地存放在一个空间内，称为表空间</p>
+<ul>
+<li><p>表空间由：</p>
+<ul>
+<li>段</li>
+<li>区</li>
+<li>页</li>
+</ul>
+<p>组成</p>
+</li>
+<li><p>表空间可以看作是InnoDB存储引擎逻辑结构的最高层</p>
+<ul>
+<li>其本质上是一个有一个或多个磁盘文件组成的虚拟文件系统</li>
+</ul>
+</li>
+<li><p>段</p>
+<ul>
+<li>表空间是由各个段组成的<ul>
+<li>数据段</li>
+<li>索引段</li>
+<li>回滚段</li>
+</ul>
+</li>
+<li>数据即索引，索引即数据</li>
+<li>数据段即为B+树段叶子节点</li>
+<li>索引段即为B+树段非叶子节点</li>
+</ul>
+</li>
+<li><p>区</p>
+<ul>
+<li>区是由连续的页组成的空间，任何情况下每个区的大小都为1mb </li>
+<li>为了保证页的连续性，InnoDB存储引擎每次从磁盘一次申请4-5个区。</li>
+<li>默认情况下，InnoDB存储引擎的页大小为16KB，即一个区中有64个连续的页<ul>
+<li>1MB/16KB=64</li>
+</ul>
+</li>
+<li>引入压缩页，每个页的大小可以通过参数KEY_BLOCK_SIZE设置为2K、4K、8K，因此每个区对应的页尾512、256、128、</li>
+<li>InnDB 1.2.x版本新增了参数innodb_page_size，通过该参数可以将默认页的大小设置为4K、8K，但是页中的数据不是压缩的</li>
+</ul>
+</li>
+<li><p>页</p>
+<ul>
+<li>InnoDB存储引擎磁盘管理的最小单位，每个页默认为16KB。</li>
+<li>若设置完成，则所有表中页的大小都为innodb_page_size，不可以再次对其进行修改，除非通过mysqldump导入和导出操作来产生新的库</li>
+</ul>
+</li>
+<li><p>行</p>
+<ul>
+<li>InnoDB存储引擎是面向列的（row-oriented），也就是说数据是按行进行存放的</li>
+<li>每个页存放的行记录也是有硬性定义的，最多允许存放16KB/2-200，即7992行记录</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><img src="https://i.loli.net/2021/04/22/gD3wlEY8RHNQUq5.png" alt="image-20210422202645315"></p>
+<ul>
+<li>负责对表中数据的读取和写入工作的部分是存储引擎</li>
+<li>不同存储引擎存放数据的格式不同</li>
+</ul>
+</li>
+<li><p>当我们想从表中获取某些记录时，InnoDB存储引擎需要一条一条的把记录从磁盘上读出来么？</p>
+<ul>
+<li>InnoDB采取的方式是：将数据划分为若干个页，以页作为磁盘和内存之间交互的基本单位，InnoDB中页的大小一般为 16 KB。也就是在一般情况下，一次最少从磁盘中读取16KB的内容到内存中，一次最少把内存中的16KB内容刷新到磁盘中</li>
+</ul>
+</li>
+<li><p>InnoDB的页结构</p>
+<ul>
+<li>完全空闲的页是没有User Records部分的</li>
+<li>插入数据时，从Free Space分配空间给User Records</li>
+<li>如果不够空间时，那么就要申请新的页</li>
+<li>查询最快的方式是二分法，时间复杂度为O（lgN）</li>
+</ul>
+</li>
+</ul>
+<h1 id="索引深入复习"><a href="#索引深入复习" class="headerlink" title="索引深入复习"></a>索引深入复习</h1><ul>
+<li>使用索引为什么可以加快数据库的检索速度<ul>
+<li>将无序的数据变成有序（相对）</li>
+<li>有索引可以通过“目录”就可以很快地定位到对应的页上</li>
+<li>用B+树</li>
+</ul>
+</li>
+<li>为什么说索引会降低插入、删除、修改等维护任务的速度<ul>
+<li>索引中用了B+树，如果我们对这棵树增删改的话，那肯定会破坏它的原有结构</li>
+<li>要维持平衡树，就必须做额外的工作。正因为这些额外的工作开销，导致索引会降低增删改</li>
+</ul>
+</li>
+<li>Hash索引<ul>
+<li>本质上就是把键值换算成新的哈希值，根据这个哈希值来定位</li>
+<li>哈希索引没办法利用索引完成排序</li>
+<li>不支持最左匹配原则</li>
+<li>哈希碰撞</li>
+<li>不支持范围查询</li>
+</ul>
+</li>
+<li>聚集索引和非聚集索引有什么区别<ul>
+<li>聚集索引就是以主键创建的索引</li>
+<li>非聚集索引就是以非主键创建的索引【二级索引】</li>
+<li>区别<ul>
+<li>聚集索引在叶子节点存储的是表中的数据</li>
+<li>非聚集索引在叶子节点存储的是主键和索引列</li>
+<li>使用非聚集索引查询出数据时，拿到叶子上的主键再去查到想要查找的数据<ul>
+<li>拿到主键再查找这个过程叫做回表</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>最左匹配原则<ul>
+<li>索引可以简单如一个列（a），也可以复杂如多个列（a,b,c,d），即联合索引</li>
+<li>如果是联合索引，那么key也由多个列组成，同时，索引只能用于查找key是否存在（相等），遇到范围查询(&gt;、&lt;、between、like左匹配)等就不能进一步匹配了，后续退化为线性查找</li>
+<li>列的排列顺序决定了可命中索引的列数</li>
+<li>如有索引(a, b, c, d)，查询条件a = 1 and b = 2 and c &gt; 3 and d = 4，则会在每个节点依次命中a、b、c，无法命中d。(很简单：索引命中只能是相等的情况，不能是范围匹配)</li>
+<li>最左前缀匹配原则。非常重要的原则，MySQL会一直向右匹配直到遇到范围查询（&gt;,&lt;,BETWEEN,LIKE）就停止匹配</li>
+</ul>
+</li>
+</ul>
+<h1 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h1><ul>
+<li>事务的ACID<ul>
+<li>原子性<ul>
+<li>要么都成功，要么全部回滚</li>
+</ul>
+</li>
+<li>一致性<ul>
+<li>数据库的完整性没有被破坏</li>
+</ul>
+</li>
+<li>隔离性<ul>
+<li>多个事务发生时 ，一个事务的执行不应影响其他事务的执行</li>
+</ul>
+</li>
+<li>持久性<ul>
+<li>事务完成后，数据会被刷新到磁盘永久保存</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h1><ul>
+<li><p>加锁是实现数据库并发控制的一个非常重要的技术</p>
+</li>
+<li><p>当事务在对某个数据对象进行操作前，先向系统发出请求，对其加锁。</p>
+</li>
+<li><p>加锁后事务就对该数据对象有了一定的控制，在该事务释放锁之前，其他的事务不能对此数据对象进行更新操作。</p>
+</li>
+<li><p>什么是锁呢？</p>
+<ul>
+<li>锁是计算机协调多个进程或线程并发访问某一资源的机制</li>
+<li>锁保证并发访问的一致性、有效性</li>
+<li>锁冲突也是影响数据库并发访问性能的一个重要因素</li>
+<li>锁是MySQL在服务器层和存储引擎层的并发控制</li>
+</ul>
+</li>
+<li><p>表锁</p>
+<ul>
+<li>开销小，加锁快</li>
+<li>不会出现死锁</li>
+<li>锁定力度大，发生锁冲突概率高，并发度最低</li>
+</ul>
+</li>
+<li><p>行锁</p>
+<ul>
+<li>开销大，加锁慢</li>
+<li>会出现死锁</li>
+<li>锁定粒度小，发生锁冲突的概率低，并发度高</li>
+</ul>
+</li>
+<li><p>不同的存储引擎支持的锁粒度不一样</p>
+<ul>
+<li>InnoDB行锁和表锁都支持<ul>
+<li>InnoDB只有通过索引条件检索数据的时候才使用行级锁，不然InnoDB将使用表锁</li>
+</ul>
+</li>
+<li>MyISAM只支持表锁</li>
+</ul>
+</li>
+<li><p>锁的类型</p>
+<ul>
+<li>表锁<ul>
+<li>读锁<br>也叫共享锁<ul>
+<li>针对同一份数据，多个读操作可以同时进行而不会互相影响</li>
+</ul>
+</li>
+<li>写锁<br>也叫排他锁<ul>
+<li>当前操作没完成之前，会阻塞其它读和写操作</li>
+</ul>
+</li>
+<li>是存储引擎MyISAM的默认锁</li>
+<li>读读不阻塞，读写阻塞，写写阻塞</li>
+<li>读锁和写锁是互斥的，读写操作是串行<ul>
+<li>写锁优先于读锁</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>行锁<ul>
+<li>InnoDB和MyISAM有两个本质的区别<ul>
+<li>InnoDB支持行锁</li>
+<li>InnoDB支持事务</li>
+</ul>
+</li>
+<li>读锁<br>也叫共享锁</li>
+<li>写锁<br>也叫排他锁</li>
+<li>意向共享锁<ul>
+<li>一个事务给一个数据行加共享锁时，必须先获得表的意向共享锁</li>
+</ul>
+</li>
+<li>意向排它锁<ul>
+<li>一个事务给一个数据行加排他锁时，必须先获得该表的IX锁 </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>为什么上了写锁，别的事务还可以读操作</p>
+<ul>
+<li>因为InnoDB有MVCC机制（多版本并发控制），可以使用快照读，而不会被阻塞</li>
+</ul>
+</li>
+<li><p>行锁的注意点</p>
+<ul>
+<li>只有通过索引条件检索数据时，InnoDB才会使用行级锁，否则会使用表级锁（索引失效，行锁变表锁）</li>
+<li>即使是访问不同行的记录，如果使用的是相同的索引键，会发生锁冲突</li>
+<li>如果数据表建有多个索引时，可以通过不同的索引锁定不同的行</li>
+</ul>
+</li>
+<li><p>优化建议</p>
+<ul>
+<li>尽可能让所有数据检索都通过索引来完成，避免无索引行锁升级为表锁</li>
+<li>合理设计索引，尽量锁小锁的范围</li>
+<li>尽可能较小检索条件，避免间隙锁</li>
+<li>尽量控制事务大小，减少锁定资源量和时间长度</li>
+<li>尽可能低级别事务隔离</li>
+</ul>
+</li>
+<li><p>如何避免死锁</p>
+<ul>
+<li>加锁顺序一致，尽可能一次性锁定所需的数据行</li>
+<li>尽量基于primary（主键）或unique key更新数据</li>
+<li>单次操作数据量不宜过多，涉及表尽量少</li>
+<li>减少表上索引，减少锁定资源</li>
+<li>尽量使用较低的隔离级别</li>
+<li>尽量使用相同条件访问数据，这样可以避免间隙锁对并发的插入影响</li>
+<li>精心设计索引，尽量使用索引访问数据</li>
+<li>借助相关工具</li>
+</ul>
+</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/04/23/mysql%E5%A4%8D%E4%B9%A0/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-MySql高性能优化" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
